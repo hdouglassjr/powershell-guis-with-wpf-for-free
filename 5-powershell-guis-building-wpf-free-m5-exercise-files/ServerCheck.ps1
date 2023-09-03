@@ -69,23 +69,20 @@
 
 Add-Type -AssemblyName PresentationFramework 
 
-function Get-SysTab($computer)
-{
+function Get-SysTab($computer) {
 	$sys = Get-CimInstance -ComputerName $Computer win32_operatingsystem | Select-Object Caption, installdate, Servicepackmajorversion
 	$os.content = $sys.caption
 	$Inst.content = $sys.installdate
 	$sp.content = $sys.Servicepackmajorversion
 }
 
-function Get-EventTab($computer)
-{
-	$ev = Get-EventLog application -ComputerName $computer -newest 100 | select TimeGenerated, EntryType, Source, InstanceID | sort-property Time
+function Get-EventTab($computer) {
+	$ev = Get-EventLog application -ComputerName $computer -newest 100 | Select-Object TimeGenerated, EntryType, Source, InstanceID | sort-property Time
 	return $ev
 }
 
-function Get-ProcTab($computer)
-{
-	$proc = Get-Process -ComputerName $computer | select ID, Name, CPU | sort-Property CPU -Descending
+function Get-ProcTab($computer) {
+	$proc = Get-Process -ComputerName $computer | Select-Object ID, Name, CPU | sort-Property CPU -Descending
 	return $proc
 }
 
@@ -113,6 +110,6 @@ $start.add_click( {
 		$Procs = Get-ProcTab $comp
 		$arrproc.addrange($Procs)
 		$pdg.ItemsSource = @($arrproc)
-} )
+	} )
 
 $Win.ShowDialog() 
