@@ -1,20 +1,20 @@
 ﻿Add-Type -AssemblyName PresentationFramework 
 
-Function Get-SysTab($computer){
-$sys = Get-CimInstance win32_operatingsystem | select-object Caption, installdate, Servicepackmajorversion
-$os.content = $sys.caption
-$Inst.content =$sys.installdate
-$sp.content = $sys.Servicepackmajorversion
+Function Get-SysTab($computer) {
+    $sys = Get-CimInstance win32_operatingsystem | select-object Caption, installdate, Servicepackmajorversion
+    $os.content = $sys.caption
+    $Inst.content = $sys.installdate
+    $sp.content = $sys.Servicepackmajorversion
 }
 
-Function Get-EventTab($computer){
-$ev = get-eventlog application -ComputerName $computer -newest 100 | select TimeGenerated, EntryType, Source, InstanceID | sort -property Time
-Return $ev
+Function Get-EventTab($computer) {
+    $ev = get-eventlog application -ComputerName $computer -newest 100 | Select-Object TimeGenerated, EntryType, Source, InstanceID | Sort-Object -property Time
+    Return $ev
 }
 
-Function Get-ProcTab($computer){
-$proc = Get-Process -ComputerName $computer| select ID,Name,CPU | Sort -Property Name
-Return $proc
+Function Get-ProcTab($computer) {
+    $proc = Get-Process -ComputerName $computer | Select-Object ID, Name, CPU | Sort-Object -Property Name
+    Return $proc
 }
 
 [xml]$form = @"
@@ -61,8 +61,8 @@ Return $proc
 </Window>
 
 "@
-$NR=(New-Object System.Xml.XmlNodeReader $Form)
-$Win=[Windows.Markup.XamlReader]::Load( $NR ) 
+$NR = (New-Object System.Xml.XmlNodeReader $Form)
+$Win = [Windows.Markup.XamlReader]::Load( $NR ) 
 
 $computer = $win.FindName("ComputerName")
 $start = $win.FindName("Start")
@@ -76,15 +76,15 @@ $arrev = New-Object System.Collections.ArrayList
 $arrproc = New-Object System.Collections.ArrayList
 
 $start.add_click({
-$comp = $computer.Text
-Get-Systab $comp
-$events= Get-EventTab $comp
-$arrev.addrange($events)
-$edg.ItemsSource=@($arrev)
-$Procs = Get-ProcTab $comp
-$arrproc.addrange($Procs)
-$pdg.ItemsSource=@($arrproc)
-})
+        $comp = $computer.Text
+        Get-Systab $comp
+        $events = Get-EventTab $comp
+        $arrev.addrange($events)
+        $edg.ItemsSource = @($arrev)
+        $Procs = Get-ProcTab $comp
+        $arrproc.addrange($Procs)
+        $pdg.ItemsSource = @($arrproc)
+    })
 
 #$arr.addrange($ev)
 #$dg.ItemsSource =@($arr)
